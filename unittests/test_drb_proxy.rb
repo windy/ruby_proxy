@@ -1,8 +1,5 @@
-$LOAD_PATH.unshift File.join(__FILE__,'..','..','lib')
+require 'setup'
 
-require 'test/unit'
-
-require 'ruby_proxy'
 class Me
 	def a
 		"a"
@@ -12,7 +9,11 @@ end
 
 
 class TestDrbProxy < Test::Unit::TestCase
+	@@atu = nil
 	def setup
+		return unless @@atu.nil?
+		@@atu = File.expand_path(File.join(__FILE__,'..','support','atu'))
+		RubyProxy::DRbClient.proxy_load(@@atu)
   end
 
   def test_server_start_auto
@@ -114,11 +115,16 @@ class TestDrbProxy < Test::Unit::TestCase
     assert([1,"1"],ATU::M1::Hello6.a(1,"1"))
     assert("m",ATU::M1::m)
   end
-  # failed
+  # failed, fix me
   def test_block_ok
     a = ATU::M1::Hello6.new
     assert_equal(1,a.a() {|i| i})
   end
 
+	def test_file_path
+		assert_equal([__FILE__],ATU::M1::Hello6.a(__FILE__))
+		path = File.join(__FILE__,'..','support','atu','hello.rb')
+		assert_equal(true,ATU::M1::Hello6.file_exist?(path))
+	end
 	
 end

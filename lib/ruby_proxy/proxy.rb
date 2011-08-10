@@ -9,15 +9,21 @@ module RubyProxy
     ProxyLoad.load
     @@logger = Logger.new(STDOUT)
     @@logger.level = Logger::DEBUG
-    def self.proxy(klass_name,method=nil,*arg,&block)
+    
+    def self.proxy(klass_name,method=nil,*arg)
       @@logger.debug "klass_name= #{klass_name}"
       @@logger.debug "method = #{method}"
       @@logger.debug "arg = #{arg.join(',')}"
       if method.nil?
         return proxy_module(klass_name)
       else
-        return proxy_module(klass_name).send(method,*arg,&block)
+        return proxy_module(klass_name).send(method,*arg)
       end
+    end
+    
+    def self.proxy_load(dir_or_file)
+      ProxyLoad.load_path << dir_or_file
+      ProxyLoad.load
     end
     
     def self.proxy_type(klass_name)

@@ -27,5 +27,6 @@ if $0 == __FILE__
   puts "start server port:#{ARGV[1]}"
   RubyProxy::DRbServer.ip = ARGV[0] unless ARGV[0].nil?
   RubyProxy::DRbServer.port = ARGV[1] unless ARGV[1].nil?
+  Dir.chdir ARGV[2] unless ARGV[2].nil?
   RubyProxy::DRbServer.start_service
 end

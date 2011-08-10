@@ -7,7 +7,7 @@ module RubyProxy
     class <<self
       attr_accessor :load_path
       def load
-        load_path.each do |p|
+        load_path.uniq.each do |p|
           if File.directory?(p)
             Dir[p.chomp("/") + "/*.rb"].each do |file|
               load_file(file)

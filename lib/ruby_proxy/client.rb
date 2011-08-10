@@ -21,11 +21,11 @@ module ATU
             #puts self.class.to_s
             @proxy = RubyProxy::DRbClient.client.proxy(self.class.to_s,"new",*arg)
           end
-          def method_missing(name,*arg,&block)
+          def method_missing(name,*arg)
             #return if @proxy.nil?
             #puts "#{@proxy.methods(false)}"
             #puts "proxy = #{@proxy} method=#{name} arg=#{arg.join(',')}"
-            @proxy.__send__(name.to_s,*arg,&block)
+            @proxy.__send__(name.to_s,*arg)
           end
           def self.const_missing(name)
             name = self.name.to_s + "::" + name.to_s
@@ -37,9 +37,10 @@ module ATU
             end
             RubyProxy::DRbClient.client.proxy(name.to_s)
           end
-
-          def self.method_missing(name,*arg,&block)
-            RubyProxy::DRbClient.client.proxy(self.name.to_s,name.to_s,*arg,&block)
+          
+          # block not support now
+          def self.method_missing(name,*arg)
+            RubyProxy::DRbClient.client.proxy(self.name.to_s,name.to_s,*arg)
           end
 
         end
@@ -144,6 +145,10 @@ module RubyProxy
       end
 
       attr_accessor :ip,:port
+      
+      def proxy_load(dir_or_file)
+        client.proxy_load(dir_or_file)
+      end
 
       def start_service(t=5)
         message = nil
@@ -151,8 +156,9 @@ module RubyProxy
         
         server_thread =  Thread.new do
             @@logger.info "start jruby proxy server..."
+            org_path = Dir.pwd
             Dir.chdir(File.join(File.dirname(__FILE__),'..')) do
-            system("start /I /B jruby ruby_proxy/server.rb #{@ip} #{@port} ")#> #{@start_service_log_path} 2>&1")
+            system("start /I /B jruby ruby_proxy/server.rb #{@ip} #{@port} #{org_path} ")#> #{@start_service_log_path} 2>&1")
             end
         end
         wait_until_server_start_time(t)
