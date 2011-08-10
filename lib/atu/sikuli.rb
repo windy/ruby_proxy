@@ -4,7 +4,7 @@ require 'java'
 #This is key to making it work under ruby. The path above is the default
 #installation location on the Mac which contains all of the
 #relevant sikuli jar files.
-require "sikuli-script.jar"
+require "atu/sikuli-script.jar"
 
 module B
 class C
