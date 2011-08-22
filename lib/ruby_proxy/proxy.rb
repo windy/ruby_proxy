@@ -8,7 +8,7 @@ module RubyProxy
     # you can use Proxy.load_path << "" to add load path
     ProxyLoad.load
     @@logger = Logger.new(STDOUT)
-    @@logger.level = Logger::DEBUG
+    @@logger.level = Logger::INFO
     
     def self.proxy(klass_name,method=nil,*arg)
       @@logger.debug "klass_name= #{klass_name}"

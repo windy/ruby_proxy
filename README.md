@@ -16,7 +16,6 @@ Compatibility
 I test it passed in ruby1.8.6p111 and jruby1.6.3( ruby-1.8.7-p330 )
 Sikuli use 1.0rc2
 
-```
 
 Installation
 ------------

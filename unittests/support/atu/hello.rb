@@ -88,6 +88,24 @@ module ATU
       end
     end
     
+    class Hello7
+      def to_a
+        puts "call to_a"
+        [1,2,3]
+      end
+      def type(a)
+        puts "call type"
+        "a"
+      end
+      def to_s
+        puts "call to_s"
+        return "b"
+      end
+      def normal
+        "normal"
+      end
+    end
+    
   end
   
 end

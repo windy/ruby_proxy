@@ -2,7 +2,7 @@ require 'logger'
 module RubyProxy
   class ProxyLoad
     @@logger = Logger.new(STDOUT)
-    @@logger.level = Logger::DEBUG
+    @@logger.level = Logger::INFO
     @load_path = ['atu']
     class <<self
       attr_accessor :load_path

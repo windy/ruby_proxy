@@ -21,7 +21,7 @@ class TestDrbProxy < Test::Unit::TestCase
   end
 	def test_atu_ok
 		a = ATU::Hello.new
-		puts "aaa= #{a}"
+		#~ puts "aaa= #{a}"
 	  assert_equal(1,a.return_1)
 		assert_equal("1",a.return_str_1)
 	end
@@ -115,7 +115,10 @@ class TestDrbProxy < Test::Unit::TestCase
     assert([1,"1"],ATU::M1::Hello6.a(1,"1"))
     assert("m",ATU::M1::m)
   end
+	
   # failed, fix me
+	# I have not seen druby's block call. That not be supported to call block.
+	# I will do fixing it later.
   def test_block_ok
     a = ATU::M1::Hello6.new
     assert_equal(1,a.a() {|i| i})
@@ -125,6 +128,17 @@ class TestDrbProxy < Test::Unit::TestCase
 		assert_equal([__FILE__],ATU::M1::Hello6.a(__FILE__))
 		path = File.join(__FILE__,'..','support','atu','hello.rb')
 		assert_equal(true,ATU::M1::Hello6.file_exist?(path))
+	end
+	
+	#now pass it 
+	# it seems sometimes druby in jruby has some bugs like concurrent problem.
+	# other time, I will fix it.  
+	def test_specify_method_support
+		hello7 = ATU::M1::Hello7.new
+		assert_equal([1,2,3],hello7.to_a)
+		assert_equal("a",hello7.type("b"))
+		assert_equal("b",hello7.to_s)
+		assert_equal("normal",hello7.normal)
 	end
 	
 end

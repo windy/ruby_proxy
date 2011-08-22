@@ -1,4 +1,5 @@
 require 'drb'
+require 'ext/drb_ext'
 require 'timeout'
 require 'socket'
 require 'logger'
@@ -12,7 +13,7 @@ module ATU
   end
 
   def self.make_kclass(name,type)
-    puts "make_kclass: #{name}, #{type}"
+    #puts "make_kclass: #{name}, #{type}"
     case type
     when "Class"
       RubyProxy::KlassFactory.make_class(name) do |klass|
@@ -20,7 +21,21 @@ module ATU
           def initialize(*arg)
             #puts self.class.to_s
             @proxy = RubyProxy::DRbClient.client.proxy(self.class.to_s,"new",*arg)
+            # undef type method 
+            # I think all methods should be proxyed by remote
+            #~ class << @proxy
+              #~ undef :type
+            #~ end
           end
+          undef :type
+          undef :to_s
+          undef :to_a if respond_to?(:to_a)
+          undef :methods
+          
+          def __proxy
+            @proxy
+          end
+          
           def method_missing(name,*arg)
             #return if @proxy.nil?
             #puts "#{@proxy.methods(false)}"
@@ -158,7 +173,9 @@ module RubyProxy
             @@logger.info "start jruby proxy server..."
             org_path = Dir.pwd
             Dir.chdir(File.join(File.dirname(__FILE__),'..')) do
-            system("start /I /B jruby ruby_proxy/server.rb #{@ip} #{@port} #{org_path} ")#> #{@start_service_log_path} 2>&1")
+            # we can start jruby proxy or ruby
+            # just change here command
+            system("start /I /B jruby ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\" ")#> #{@start_service_log_path} 2>&1")
             end
         end
         wait_until_server_start_time(t)
