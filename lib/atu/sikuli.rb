@@ -6,10 +6,6 @@ require 'java'
 #relevant sikuli jar files.
 require "atu/sikuli-script.jar"
 
-module B
-class C
-end
-end
 
 
 #~ include Java
@@ -18,10 +14,10 @@ module ATU
     java_import 'org.sikuli.script.Region'
     java_import 'org.sikuli.script.Screen'
     java_import 'org.sikuli.script.Settings'
+    java_import 'org.sikuli.script.Pattern'
     java_import 'org.sikuli.script.SikuliEvent'
     java_import 'org.sikuli.script.SikuliScript'
     include Java::OrgSikuliScript
-    include B
   end
   #Sikuli = Java::OrgSikuliScript
 end
