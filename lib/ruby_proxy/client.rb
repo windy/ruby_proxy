@@ -175,8 +175,11 @@ module RubyProxy
             Dir.chdir(File.join(File.dirname(__FILE__),'..')) do
             # we can start jruby proxy or ruby
             # just change here command
+			temp = ENV["RUBYOPT"]
+            ENV["RUBYOPT"] = "-rubygems"
             system("start /I /B jruby ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\" ")#> #{@start_service_log_path} 2>&1")
-            end
+            ENV["RUBYOPT"] = temp
+			end
         end
         wait_until_server_start_time(t)
       end
