@@ -1,3 +1,5 @@
+$LOAD_PATH.unshift File.dirname(__FILE__)
+
 require 'setup'
 
 class Me
@@ -105,15 +107,15 @@ class TestDrbProxy < Test::Unit::TestCase
 	
 	def test_include_other_module
 		a = ATU::M1::Hello6.new
-		assert("b",a.b)
+		assert_equal("bb",a.bb)
 	end
 	def test_constant_should_ok
-		assert(1,ATU::M1::Hello6::C)
+		assert_equal(1,ATU::M1::Hello6::C)
   end
 
   def test_class_module_function_should_ok
-    assert([1,"1"],ATU::M1::Hello6.a(1,"1"))
-    assert("m",ATU::M1::m)
+    assert_equal([1,"1"],ATU::M1::Hello6.a(1,"1"))
+    assert_equal("m",ATU::M1::m)
   end
 	
   # failed, fix me

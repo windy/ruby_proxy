@@ -1,6 +1,6 @@
 require 'drb'
 module DRb
   class DRbObject
-    undef :type
+    undef :type rescue nil
   end
 end

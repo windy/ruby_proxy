@@ -27,7 +27,7 @@ module ATU
               #~ undef :type
             #~ end
           end
-          undef :type
+          undef :type rescue nil
           undef :to_s
           undef :to_a if respond_to?(:to_a)
           undef :methods
@@ -177,7 +177,7 @@ module RubyProxy
             # just change here command
 			temp = ENV["RUBYOPT"]
             ENV["RUBYOPT"] = "-rubygems"
-            system("start /I /B jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\"  > #{@start_service_log_path} 2>&1")
+            system("start /I /B jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\"  ") #> #{@start_service_log_path} 2>&1")
             ENV["RUBYOPT"] = temp
 			end
         end

@@ -1,6 +1,6 @@
 module B
-  def b
-    return "b"
+  def bb
+    return "bb"
   end
   class H
   end
