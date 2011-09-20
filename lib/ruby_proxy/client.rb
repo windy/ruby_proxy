@@ -168,7 +168,7 @@ module RubyProxy
       def start_service(t=5)
         message = nil
         @start_service_log_path = File.join(File.dirname(__FILE__),'start_service.log')
-        
+        @service_log = nil
         server_thread =  Thread.new do
             @@logger.info "start jruby proxy server..."
             org_path = Dir.pwd
@@ -177,11 +177,13 @@ module RubyProxy
             # just change here command
 			temp = ENV["RUBYOPT"]
             ENV["RUBYOPT"] = "-rubygems"
-            system("start /I /B jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\"  ") #> #{@start_service_log_path} 2>&1")
+            #system("start /I /B jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\"  ") #> #{@start_service_log_path} 2>&1")
+            @service_log = IO.popen("jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\" 2>&1")
             ENV["RUBYOPT"] = temp
 			end
         end
         wait_until_server_start_time(t)
+        #@service_log.close
       end
       
       def stop_service(t=5)
@@ -206,7 +208,7 @@ module RubyProxy
             sleep 1
           end
         end
-        raise RuntimeError,"start drbserver fail, reason: #{File.read(@start_service_log_path) rescue nil}"
+        raise RuntimeError,"start drbserver fail, reason: \n#{@service_log.read rescue nil}"
       end
 
     end
