@@ -203,12 +203,20 @@ module RubyProxy
           begin
             TCPSocket.new(@ip,@port)
             @@logger.info "server is starting"
+            do_at_exit
             return true
           rescue Exception
             sleep 1
           end
         end
         raise RuntimeError,"start drbserver fail, reason: \n#{@service_log.read rescue nil}"
+      end
+
+      def do_at_exit
+        at_exit do
+          @@logger.info "try to stop service"
+          stop_service
+        end
       end
 
     end
