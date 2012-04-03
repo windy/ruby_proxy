@@ -6,7 +6,7 @@ module RubyProxy
   class Proxy
     # loading proxy class, default folder: atu
     # you can use Proxy.load_path << "" to add load path
-    ProxyLoad.load
+    #~ ProxyLoad.load
     @@logger = Logger.new(STDOUT)
     @@logger.level = Logger::INFO
     
@@ -21,9 +21,9 @@ module RubyProxy
       end
     end
     
-    def self.proxy_load(dir_or_file)
-      ProxyLoad.load_path << dir_or_file
-      ProxyLoad.load
+    def self.proxy_load(file_or_gem)
+      #~ ProxyLoad.load_path << dir_or_file
+      ProxyLoad.load_file(file_or_gem)
     end
     
     def self.proxy_type(klass_name)
@@ -44,7 +44,7 @@ module RubyProxy
       klass_name_array.shift if klass_name_array[0] == "ATU"
       klass_name_array.each do |m|
         if atu.nil?
-          atu = ATU.const_get(m)
+          atu = Kernel.const_get(m)
         else
           atu = atu.const_get(m)
         end

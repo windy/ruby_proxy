@@ -5,10 +5,23 @@ require 'socket'
 require 'logger'
 
 module ATU
+  
+  #require redefine
+  class << self
+    alias require_old require
+    
+    def require(arg)
+      #TODO: path maybe confict
+      #~ path= File.expand_path File.join(Dir.pwd,arg)
+      #~ path += '.rb'
+      RubyProxy::DRbClient.proxy_load(arg)
+    end
+  end
+
   #entry
   def self.const_missing(name)
     name = self.name.to_s + "::" + name.to_s
-    type = RubyProxy::DRbClient.client.proxy_type(name.to_s)
+    type = RubyProxy::DRbClient.client.proxy_type(name)
     make_kclass(name,type)
   end
 
@@ -19,14 +32,9 @@ module ATU
       RubyProxy::KlassFactory.make_class(name) do |klass|
         klass.class_eval do
           def initialize(*arg)
-            #puts self.class.to_s
             @proxy = RubyProxy::DRbClient.client.proxy(self.class.to_s,"new",*arg)
-            # undef type method 
-            # I think all methods should be proxyed by remote
-            #~ class << @proxy
-              #~ undef :type
-            #~ end
           end
+           # I think all methods should be proxyed by remote
           undef :type rescue nil
           undef :to_s
           undef :to_a if respond_to?(:to_a)
@@ -40,7 +48,7 @@ module ATU
             #return if @proxy.nil?
             #puts "#{@proxy.methods(false)}"
             #puts "proxy = #{@proxy} method=#{name} arg=#{arg.join(',')}"
-            @proxy.__send__(name.to_s,*arg)
+            @proxy.__send__(name,*arg)
           end
           def self.const_missing(name)
             name = self.name.to_s + "::" + name.to_s
@@ -103,7 +111,7 @@ module RubyProxy
       end
     end
   
-  #生成类,返回类常量
+  # generate proxy class
     def self.make_class(klass_name)
       klass_name = klass_name.to_s
       name_ok?(klass_name)
@@ -132,31 +140,33 @@ module RubyProxy
       raise TypeError," name #{name} can't be class or module name." unless name =~ /^[A-Z][a-zA-Z_0-9]*/
     end
   end
+  
+  # Get DRbClient
   class DRbClient
     @client = nil
-    @port = 9000
-    @ip = "127.0.0.1"
+    @config = Config.new
+    @port = @config.port
+    @ip = @config.ip
+    @command = @config.command
     @@logger =  Logger.new(STDOUT)
-    @@logger.level= Logger::DEBUG
+    @@logger.level= Logger::INFO
     class <<self
       def client
         begin
           stop_service if @client.nil?
-          @client ||= DRbObject.new(nil,"druby://#{@ip}:#{@port}")
-          alive?
-          @client
-        rescue Exception
-          start_service
-          @client ||= DRbObject.new(nil,"druby://#{@ip}:#{@port}")
-          @client
+          start_service if @client.nil?
+          connect_addr = "druby://#{@ip}:#{@port}"
+          @client ||= DRbObject.new(nil,connect_addr)
+        rescue DRb::DRbConnError
+          raise RubyProxy::NotConnError, "can connect to druby server: #{connect_addr}"
         end
       end
 
       def alive?
         @client.respond_to?("any_thing")
-        @client
+        true
       rescue DRb::DRbConnError
-        raise
+        false
       end
 
       attr_accessor :ip,:port
@@ -165,25 +175,24 @@ module RubyProxy
         client.proxy_load(dir_or_file)
       end
 
-      def start_service(t=5)
+      # not use it later
+      def start_service(t=10)
         message = nil
-        @start_service_log_path = File.join(File.dirname(__FILE__),'start_service.log')
         @service_log = nil
-        server_thread =  Thread.new do
-            @@logger.info "start jruby proxy server..."
-            org_path = Dir.pwd
-            Dir.chdir(File.join(File.dirname(__FILE__),'..')) do
-            # we can start jruby proxy or ruby
-            # just change here command
-			temp = ENV["RUBYOPT"]
-            ENV["RUBYOPT"] = "-rubygems"
-            #system("start /I /B jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\"  ") #> #{@start_service_log_path} 2>&1")
-            @service_log = IO.popen("jruby -J-Dfile.encoding=UTF-8 ruby_proxy/server.rb #{@ip} #{@port} \"#{org_path}\" 2>&1")
-            ENV["RUBYOPT"] = temp
-			end
-        end
+        @@logger.info "start ruby proxy server..."
+        @@logger.info start_command
+        #~ @server_thread =  Thread.new do |t|
+            #~ t.abort_on_exception = true
+            @service_log = IO.popen(start_command)
+        #~ end
+        #~ @server_thread.abort_on_exception = true
         wait_until_server_start_time(t)
-        #@service_log.close
+      end
+      
+      def start_command
+        raise RubyProxy::CommandNotFoundError, "ruby command can not be found: #{@command}" unless File.file?(@command)
+        server_file = File.expand_path File.join( File.dirname(__FILE__), 'server.rb' )
+        @command + " " + server_file
       end
       
       def stop_service(t=5)
@@ -201,6 +210,7 @@ module RubyProxy
       def wait_until_server_start_time(t)
         t.times do |tt|
           begin
+            #~ raise CannotStartServer, "" unless @server_thread.alive?
             TCPSocket.new(@ip,@port)
             @@logger.info "server is starting"
             do_at_exit
@@ -209,7 +219,7 @@ module RubyProxy
             sleep 1
           end
         end
-        raise RuntimeError,"start drbserver fail, reason: \n#{@service_log.read rescue nil}"
+        raise RuntimeError,"start drbserver fail"
       end
 
       def do_at_exit

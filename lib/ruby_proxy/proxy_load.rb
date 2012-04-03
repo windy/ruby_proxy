@@ -12,21 +12,18 @@ module RubyProxy
             Dir[p.chomp("/") + "/*.rb"].each do |file|
               load_file(file)
             end
-          elsif File.file?(p)
-            load_file(p)
           else
-            @@logger.warn("path: #{p} not exist ,ignore")
+            load_file(p)
           end
-        
         end
       end
       
       def load_file(file)
         @@logger.debug "require file : #{file}"
         Kernel.require file
-      rescue LoadError
-        @@logger.warn "require file : #{file} fail,exception:"
-        @@logger.warn "#{$!}"
+      rescue LoadError=>e
+        @@logger.warn "require file : #{file} fail,exception:\n#{e}"
+        raise 
       end
     end
   end

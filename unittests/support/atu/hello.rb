@@ -7,7 +7,7 @@ module B
 end
 
 
-module ATU
+#~ module ATU
   class Hello
     def initialize
     end
@@ -90,15 +90,15 @@ module ATU
     
     class Hello7
       def to_a
-        puts "call to_a"
+        #~ puts "call to_a"
         [1,2,3]
       end
       def type(a)
-        puts "call type"
+        #~ puts "call type"
         "a"
       end
       def to_s
-        puts "call to_s"
+        #~ puts "call to_s"
         return "b"
       end
       def normal
@@ -108,5 +108,5 @@ module ATU
     
   end
   
-end
+#~ end
 
