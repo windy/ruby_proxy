@@ -106,10 +106,10 @@ class TestDrbProxy < Test::Unit::TestCase
   # failed, fix me
 	# I have not seen druby's block call. That not be supported to call block.
 	# I will do fixing it later.
-  #~ def test_block_ok
-    #~ a = ATU::M1::Hello6.new
-    #~ assert_equal(1,a.a() {|i| i})
-  #~ end
+  def test_block_ok
+    a = ATU::M1::Hello6.new
+    assert_equal(1,a.b() {|i| i})
+  end
 
 	def test_file_path
 		assert_equal([__FILE__],ATU::M1::Hello6.a(__FILE__))

@@ -44,11 +44,11 @@ module ATU
             @proxy
           end
           
-          def method_missing(name,*arg)
+          def method_missing(name,*arg,&block)
             #return if @proxy.nil?
             #puts "#{@proxy.methods(false)}"
             #puts "proxy = #{@proxy} method=#{name} arg=#{arg.join(',')}"
-            @proxy.__send__(name,*arg)
+            @proxy.__send__(name,*arg,&block)
           end
           def self.const_missing(name)
             name = self.name.to_s + "::" + name.to_s
@@ -62,8 +62,8 @@ module ATU
           end
           
           # block not support now
-          def self.method_missing(name,*arg)
-            RubyProxy::DRbClient.client.proxy(self.name.to_s,name.to_s,*arg)
+          def self.method_missing(name,*arg,&block)
+            RubyProxy::DRbClient.client.proxy(self.name.to_s,name.to_s,*arg,&block)
           end
 
         end

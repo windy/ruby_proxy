@@ -77,6 +77,7 @@ end
         var = 1
         yield var
       end
+      
       def b(*arg)
         var = 1
         yield var if block_given?
