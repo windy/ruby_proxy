@@ -1,5 +1,5 @@
 
-$LOAD_PATH.unshift File.join(__FILE__,'..','..','lib') unless $LOADED
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__),'..','lib') unless $LOADED
 $LOADED = true
 
 require 'test/unit'

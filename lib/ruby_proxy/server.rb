@@ -7,15 +7,12 @@ require 'ruby_proxy/proxy'
 require 'drb/timeridconv'
 module RubyProxy
   class DRbServer
-    @config = Config.new
-    @ip = @config.ip
-    @port = @config.port
     class << self
       attr_accessor :ip,:port
     end
     def self.start_service
       DRb.install_id_conv(DRb::TimerIdConv.new)
-      DRb.start_service("druby://#{@ip}:#{@port}",Proxy)
+      DRb.start_service("druby://#{Config.ip}:#{Config.port}",Proxy)
       #~ trap("INT") { DRb.stop_service }
       # for ruby1.9
       begin

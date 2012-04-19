@@ -61,7 +61,7 @@ module ATU
             RubyProxy::DRbClient.client.proxy(name.to_s)
           end
           
-          # block not support now
+          # TODO: block not support now
           def self.method_missing(name,*arg,&block)
             RubyProxy::DRbClient.client.proxy(self.name.to_s,name.to_s,*arg,&block)
           end
@@ -144,10 +144,6 @@ module RubyProxy
   # Get DRbClient
   class DRbClient
     @client = nil
-    @config = Config.new
-    @port = @config.port
-    @ip = @config.ip
-    @command = @config.command
     @@logger =  Logger.new(STDOUT)
     @@logger.level= Logger::INFO
     class <<self
@@ -155,7 +151,7 @@ module RubyProxy
         begin
           stop_service if @client.nil?
           start_service if @client.nil?
-          connect_addr = "druby://#{@ip}:#{@port}"
+          connect_addr = "druby://#{Config.ip}:#{Config.port}"
           @client ||= DRbObject.new(nil,connect_addr)
         rescue DRb::DRbConnError
           raise RubyProxy::NotConnError, "can connect to druby server: #{connect_addr}"
@@ -190,14 +186,14 @@ module RubyProxy
       end
       
       def start_command
-        raise RubyProxy::CommandNotFoundError, "ruby command can not be found: #{@command}" unless File.file?(@command)
+        #raise RubyProxy::CommandNotFoundError, "ruby command can not be found: #{Config.command}" unless File.file?(Config.command)
         server_file = File.expand_path File.join( File.dirname(__FILE__), 'server.rb' )
-        @command + " " + server_file
+        Config.command + " " + server_file
       end
       
       def stop_service(t=5)
-        TCPSocket.new(@ip,@port)
-        @client ||= DRbObject.new(nil,"druby://#{@ip}:#{@port}")
+        TCPSocket.new(Config.ip,Config.port)
+        @client ||= DRbObject.new(nil,"druby://#{Config.ip}:#{Config.port}")
         @client.stop_proxy
         sleep 1
       rescue
@@ -211,7 +207,7 @@ module RubyProxy
         t.times do |tt|
           begin
             #~ raise CannotStartServer, "" unless @server_thread.alive?
-            TCPSocket.new(@ip,@port)
+            TCPSocket.new(Config.ip,Config.port)
             @@logger.info "server is starting"
             do_at_exit
             return true
