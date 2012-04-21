@@ -5,8 +5,7 @@ RubyProxy::Config.command = "/home/windy/.rvm/rubies/jruby-1.6.7/bin/ruby"
 class TestAtuLoad < Test::Unit::TestCase
 	def test_load_ok
 		assert_nothing_raised {
-			ATU.require 'atu/sikuli'
-			ATU.require 'atu/key'
+			ATU.require 'support/atu/hello.rb'
 		}
 	end
 
