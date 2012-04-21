@@ -1,9 +1,6 @@
 require 'logger'
 module RubyProxy
   class ProxyLoad
-    @@logger = Logger.new(STDOUT)
-    @@logger.level = Logger::ERROR
-    #~ @@logger.info $:.join(':')
     @load_path = []
     class <<self
       attr_accessor :load_path
@@ -20,10 +17,10 @@ module RubyProxy
       end
       
       def load_file(file)
-        @@logger.debug "require file : #{file}"
+        Logger.debug "require file : #{file}"
         require file
       rescue LoadError=>e
-        @@logger.warn "require file : #{file} fail,exception:\n#{e}"
+        Logger.warn "require file : #{file} fail,exception:\n#{e}"
         raise 
       end
     end

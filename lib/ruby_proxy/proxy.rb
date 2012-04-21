@@ -1,19 +1,15 @@
-require 'logger'
+require 'ruby_proxy/logger'
 require 'drb'
 require 'ruby_proxy/proxy_load'
+require 'ruby_proxy/proxy_global_set'
 
 module RubyProxy
   class Proxy
-    # loading proxy class, default folder: atu
-    # you can use Proxy.load_path << "" to add load path
-    #~ ProxyLoad.load
-    @@logger = Logger.new(STDOUT)
-    @@logger.level = Logger::INFO
-    
+
     def self.proxy(klass_name,method=nil,*arg)
-      @@logger.debug "klass_name= #{klass_name}"
-      @@logger.debug "method = #{method}"
-      @@logger.debug "arg = #{arg.join(',')}"
+      Logger.debug "klass_name= #{klass_name}"
+      Logger.debug "method = #{method}"
+      Logger.debug "arg = #{arg.join(',')}"
       if method.nil?
         return proxy_module(klass_name)
       else
@@ -22,12 +18,18 @@ module RubyProxy
     end
     
     def self.proxy_load(file_or_gem)
-      #~ ProxyLoad.load_path << dir_or_file
       ProxyLoad.load_file(file_or_gem)
+    end
+
+    def self.proxy_global_set(arg,var)
+      ProxyGlobalSet.set(arg,var)
+    end
+
+    def self.proxy_global_get(arg)
+      ProxyGlobalSet.get(arg)
     end
     
     def self.proxy_type(klass_name)
-      #@@logger.debug "proxy_type: #{proxy_const_get(klass_name).name} type is #{proxy_const_get(klass_name).class.to_s}"
       return proxy_const_get(klass_name).class.to_s
     end
     
@@ -38,7 +40,6 @@ module RubyProxy
     end
     
     def self.proxy_const_get(klass_name)
-      #@@logger.debug "const_get klass_name = #{klass_name}"
       atu = nil
       klass_name_array = klass_name.split('::')
       klass_name_array.shift if klass_name_array[0] == "ATU"

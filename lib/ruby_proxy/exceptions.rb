@@ -6,4 +6,6 @@ module RubyProxy
   class CommandNotFoundError < Error; end
   # start server fail error
   class CannotStartServer < Error; end
+	# format wrong with global variable
+	class GlobalVarFormatError < Error; end
 end

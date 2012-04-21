@@ -8,33 +8,30 @@ require "atu/sikuli-script.jar"
 
 
 
-#~ include Java
-module ATU
-  module Sikuli
-    java_import 'org.sikuli.script.Region'
-    java_import 'org.sikuli.script.Screen'
-    java_import 'org.sikuli.script.Settings'
-    java_import 'org.sikuli.script.Pattern'
-    java_import 'org.sikuli.script.SikuliEvent'
-    java_import 'org.sikuli.script.SikuliScript'
-    include Java::OrgSikuliScript
-  end
-  class Java::OrgSikuliScript::Region
-    alias old_paste paste
-    def paste(*args)
-	  len = args.length
-	  if len == 1
-	    old_paste(nil,java.lang.String.new(args[0].to_java_bytes,"utf-8"))
-	  elsif  len== 2
-	    old_paste(args[0],java.lang.String.new(args[1].to_java_bytes,"utf-8"))
-	  end
+module Sikuli
+	java_import 'org.sikuli.script.Region'
+	java_import 'org.sikuli.script.Screen'
+	java_import 'org.sikuli.script.Settings'
+	java_import 'org.sikuli.script.Pattern'
+	java_import 'org.sikuli.script.SikuliEvent'
+	java_import 'org.sikuli.script.SikuliScript'
+	include Java::OrgSikuliScript
+end
+
+class Java::OrgSikuliScript::Region
+	alias old_paste paste
+	def paste(*args)
+		len = args.length
+		if len == 1
+			old_paste(nil,java.lang.String.new(args[0].to_java_bytes,"utf-8"))
+		elsif  len== 2
+			old_paste(args[0],java.lang.String.new(args[1].to_java_bytes,"utf-8"))
+		end
 	end
-  end
-  #Sikuli = Java::OrgSikuliScript
 end
 if __FILE__ == $0
-  puts ATU::Sikuli
-  @region = ATU::Sikuli::Region.new(0, 0, 1440, 900)
+  puts Sikuli
+  @region = Sikuli::Region.new(0, 0, 1440, 900)
   puts @region.class
-  puts ATU::Sikuli::C.new.class
+  puts Sikuli::C.new.class
 end

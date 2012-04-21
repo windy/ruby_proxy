@@ -9,7 +9,6 @@ class TestConfig < Test::Unit::TestCase
   def test_config_default
     assert_equal(8000, @config.port)
     assert_equal('127.0.0.1', @config.ip)
-    assert_equal('ruby', @config.command)
   end
   
   def test_config_personal
@@ -17,8 +16,10 @@ class TestConfig < Test::Unit::TestCase
     assert_equal(1111, @config.port)
 		@config.ip = '1.1.1.1'
     assert_equal('1.1.1.1', @config.ip)
+		old_command = @config.command
 		@config.command = 'ruby'
     assert_equal('ruby', @config.command)
+		@config.command = old_command
   end
   
 end

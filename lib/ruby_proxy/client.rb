@@ -16,6 +16,14 @@ module ATU
       #~ path += '.rb'
       RubyProxy::DRbClient.proxy_load(arg)
     end
+
+		def [](arg)
+			RubyProxy::DRbClient.proxy_global_get(arg)
+		end
+
+		def []=(arg,var)
+			RubyProxy::DRbClient.proxy_global_set(arg,var)
+		end
   end
 
   #entry
@@ -167,9 +175,17 @@ module RubyProxy
 
       attr_accessor :ip,:port
       
-      def proxy_load(dir_or_file)
-        client.proxy_load(dir_or_file)
+      def proxy_load(file)
+        client.proxy_load(file)
       end
+
+			def proxy_global_get(arg)
+				client.proxy_global_get(arg)
+			end
+
+			def proxy_global_set(arg,var)
+				client.proxy_global_set(arg,var)
+			end
 
       # not use it later
       def start_service(t=10)
@@ -179,7 +195,7 @@ module RubyProxy
         @@logger.info start_command
         #~ @server_thread =  Thread.new do |t|
             #~ t.abort_on_exception = true
-            @service_log = IO.popen(start_command)
+				@service_log = IO.popen(start_command)
         #~ end
         #~ @server_thread.abort_on_exception = true
         wait_until_server_start_time(t)
@@ -209,7 +225,7 @@ module RubyProxy
             #~ raise CannotStartServer, "" unless @server_thread.alive?
             TCPSocket.new(Config.ip,Config.port)
             @@logger.info "server is starting"
-            do_at_exit
+            #do_at_exit
             return true
           rescue Exception
             sleep 1
