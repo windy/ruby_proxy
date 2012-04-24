@@ -1,0 +1,9 @@
+require 'ruby_proxy/server'
+
+RubyProxy::DRbServer.ip = ARGV[0] unless ARGV[0].nil?
+RubyProxy::DRbServer.port = ARGV[1] unless ARGV[1].nil?
+
+puts "start server ip: #{RubyProxy::DRbServer.ip}"
+puts "start server port:#{RubyProxy::DRbServer.port}"
+#~ Dir.chdir ARGV[2] unless ARGV[2].nil?
+RubyProxy::DRbServer.start_service
