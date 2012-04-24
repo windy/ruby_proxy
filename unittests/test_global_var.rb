@@ -17,4 +17,11 @@ class TestGlobalVar < Test::Unit::TestCase
 		ATU["HELLO"] = 10
 		assert_equal(10, ATU["HELLO"])
 	end
+
+  def test_global_add_ok
+    load_path = ATU["$LOAD_PATH"]
+    load_path << File.dirname(__FILE__)
+    ATU << File.dirname(__FILE__)
+    assert_equal(load_path, ATU["$LOAD_PATH"])
+  end
 end

@@ -1,8 +1,11 @@
 require 'setup'
 
-RubyProxy::Config.command = "/home/windy/.rvm/rubies/jruby-1.6.7/bin/ruby"
+#RubyProxy::Config.command = "/home/windy/.rvm/rubies/jruby-1.6.7/bin/ruby"
 
 class TestAtuLoad < Test::Unit::TestCase
+  def setup
+    ATU << File.dirname(__FILE__)
+  end
 	def test_load_ok
 		assert_nothing_raised {
 			ATU.require 'support/atu/hello.rb'

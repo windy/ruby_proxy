@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.test_files += Dir.glob("unittests/**/*")
   s.homepage = %q{https://github.com/windy/ruby_proxy}
   s.require_paths = ["lib"]
-
+  s.executables = [ "ruby_proxy_server" ]
   s.summary = %q{Ruby Proxy for two or more ruby processes.}
 
 end

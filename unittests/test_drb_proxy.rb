@@ -12,6 +12,7 @@ end
 class TestDrbProxy < Test::Unit::TestCase
   
 	def setup
+    ATU << File.dirname(__FILE__)
     ATU::require 'support/atu/hello'
   end
 

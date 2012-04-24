@@ -7,7 +7,7 @@ class TestConfig < Test::Unit::TestCase
   end
   
   def test_config_default
-    assert_equal(8000, @config.port)
+    assert_equal(8889, @config.port)
     assert_equal('127.0.0.1', @config.ip)
   end
   

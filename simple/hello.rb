@@ -1,7 +1,6 @@
-#~ class ATU
-  class Hello
-    def say
-      "hello"
-    end
+# This is an example file tha will be load by ruby proxy process
+class Hello
+  def say
+    "hello"
   end
-#~ end
+end
