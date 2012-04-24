@@ -62,7 +62,9 @@ Running the test suite
 Notice
 -------
 Please **DONOT** upgrade to 0.2.x if you are using ruby proxy before.
+
 It's API is changed more and more!
+
 I just want give you the best code. Don't be panic.
 
 Examples
