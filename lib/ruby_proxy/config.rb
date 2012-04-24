@@ -2,8 +2,9 @@ module RubyProxy
   class Config
 		@config = {
 			:ip => '127.0.0.1',
-			:port=> 8000,
-			:command => 'ruby'
+			:port=> 8889,
+			:command => 'ruby',
+      :autostart => true,
 		}
     class <<self
 			def ip
@@ -29,6 +30,13 @@ module RubyProxy
 			def command=(command)
 				@config[:command] = command
 			end
+
+      def autostart
+        @config[:autostart]
+      end
+      def autostart=(bool)
+        @config[:autostart] = bool
+      end
     end
   end
 end
