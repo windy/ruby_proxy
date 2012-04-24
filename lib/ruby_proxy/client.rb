@@ -6,7 +6,6 @@ require 'logger'
 
 module ATU
   
-  #require redefine
   class << self
     alias require_old require
     
@@ -23,6 +22,11 @@ module ATU
 
 		def []=(arg,var)
 			RubyProxy::DRbClient.proxy_global_set(arg,var)
+		end
+
+		#load path
+		def <<(path)
+			RubyProxy::DRbClient.add_load_path(path)
 		end
   end
 
@@ -157,8 +161,8 @@ module RubyProxy
     class <<self
       def client
         begin
-          stop_service if @client.nil?
-          start_service if @client.nil?
+          stop_service if @client.nil? and Config.autostart
+          start_service if @client.nil? and Config.autostart
           connect_addr = "druby://#{Config.ip}:#{Config.port}"
           @client ||= DRbObject.new(nil,connect_addr)
         rescue DRb::DRbConnError
@@ -187,6 +191,11 @@ module RubyProxy
 				client.proxy_global_set(arg,var)
 			end
 
+      def add_load_path(path)
+        #path = File.expand_path(path)
+        client.add_load_path(path)
+      end
+
       # not use it later
       def start_service(t=10)
         message = nil
@@ -199,6 +208,7 @@ module RubyProxy
         #~ end
         #~ @server_thread.abort_on_exception = true
         wait_until_server_start_time(t)
+        do_at_exit if Config.autostart
       end
       
       def start_command
@@ -208,7 +218,7 @@ module RubyProxy
       end
       
       def stop_service(t=5)
-        TCPSocket.new(Config.ip,Config.port)
+        #TCPSocket.new(Config.ip,Config.port)
         @client ||= DRbObject.new(nil,"druby://#{Config.ip}:#{Config.port}")
         @client.stop_proxy
         sleep 1
@@ -225,7 +235,6 @@ module RubyProxy
             #~ raise CannotStartServer, "" unless @server_thread.alive?
             TCPSocket.new(Config.ip,Config.port)
             @@logger.info "server is starting"
-            #do_at_exit
             return true
           rescue Exception
             sleep 1

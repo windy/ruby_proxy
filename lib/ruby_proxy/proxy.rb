@@ -28,6 +28,10 @@ module RubyProxy
     def self.proxy_global_get(arg)
       ProxyGlobalSet.get(arg)
     end
+
+    def self.add_load_path(path)
+      ProxyGlobalSet.add("$LOAD_PATH",path)
+    end
     
     def self.proxy_type(klass_name)
       return proxy_const_get(klass_name).class.to_s

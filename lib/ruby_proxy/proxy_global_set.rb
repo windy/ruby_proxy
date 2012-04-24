@@ -10,6 +10,13 @@ module RubyProxy
 				eval("#{arg} = #{value}")
 			end
 
+      # add to $LOAD_PATH
+      def add(arg,value)
+        arg = convert_to_global(arg)
+				Logger.info "global add: #{arg} << #{value}"
+        eval("#{arg} << \"#{value}\"")
+      end
+
 			def get(arg)
 				arg = convert_to_global(arg)
 				Logger.info "global get: #{arg}"
