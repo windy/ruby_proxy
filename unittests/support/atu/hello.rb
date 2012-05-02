@@ -19,6 +19,10 @@ end
       "1"
     end
     
+    def return_with_ps(a)
+      a
+    end
+    
     def return_with_2ps(a,b)
       return a,b
     end

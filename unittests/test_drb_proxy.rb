@@ -1,3 +1,4 @@
+# encoding : utf-8
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
 require 'setup'
@@ -112,7 +113,11 @@ class TestDrbProxy < Test::Unit::TestCase
 		path = File.expand_path File.join(File.dirname(__FILE__),'support','atu','hello.rb')
 		assert_equal(File.exist?(path),ATU::M1::Hello6.file_exist?(path))
 	end
-	
+  
+  def test_chinese_var_support
+    assert_equal( "中文", ATU::Hello.new.return_with_ps("中文") )
+  end
+  
 	#now pass it 
 	# it seems sometimes druby in jruby has some bugs like concurrent problem.
 	# other time, I will fix it.  
