@@ -1,0 +1,1 @@
+WIN32OLE.codepage = 123
